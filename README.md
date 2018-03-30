@@ -7,7 +7,7 @@ Alert Destination to Send Data to Alert Kinesis Stream from a Different Region
 
 ## How To Setup a CodePipeline
 
-Create a stck using 'codepipeline.yaml' using below input values
+Create a stack using 'codepipeline.yaml' using below input values
 
 Input Parameter Values
 
