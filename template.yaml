@@ -1,0 +1,73 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Cloudformation to Build SungardAS Alert System - For Different Regions
+Parameters:
+  CloudWatchLogDestinationName:
+    Type: String
+    Default: "alertDestination"
+    Description: CloudWatch Log Destination Name
+  KinesisStreamArn:
+    Type: String
+    Description: Alert Kinesis Stream Arn
+
+Resources:
+  CWLtoKinesisRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Sid: "AllowCloudwatchlogsToAssumeRole"
+            Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service: !Join
+                - "."
+                - - "logs"
+                  - !Ref AWS::Region
+                  - "amazonaws.com"
+  CWLtoKinesisRolePolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "CWLtoKinesisRolePolicy"
+      Roles:
+        - !Ref CWLtoKinesisRole
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Action:
+              - "kinesis:PutRecord"
+            Resource: !Ref KinesisStreamArn
+          -
+            Effect: "Allow"
+            Action:
+              - "iam:PassRole"
+            Resource: !GetAtt CWLtoKinesisRole.Arn
+  CloudWatchDestination:
+    Type: AWS::Logs::Destination
+    DependsOn: CWLtoKinesisRolePolicy
+    Properties:
+      DestinationName: !Ref CloudWatchLogDestinationName
+      RoleArn: !GetAtt CWLtoKinesisRole.Arn
+      TargetArn: !Ref KinesisStreamArn
+      DestinationPolicy: !Join
+        - ""
+        - - "{\"Version\" : \"2012-10-17\",\"Statement\" : [{\"Effect\" : \"Allow\", \"Principal\" : {\"AWS\" : [\""
+          - !Ref "AWS::AccountId"
+          - "\"]},\"Action\" : \"logs:PutSubscriptionFilter\", \"Resource\" : \"arn:aws:logs:"
+          - !Ref AWS::Region
+          - ":"
+          - !Ref AWS::AccountId
+          - ":destination:"
+          - !Ref CloudWatchLogDestinationName
+          - "\"}]}"
+
+Outputs:
+  CloudWatchDestinationArn:
+    Description: "CloudWatch Log Destination Arn"
+    Value: !GetAtt CloudWatchDestination.Arn
