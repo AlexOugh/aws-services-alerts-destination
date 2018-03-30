@@ -9,4 +9,5 @@ aws cloudformation package \
 
 aws cloudformation deploy --template-file ./samTemplate.yaml \
   --capabilities CAPABILITY_IAM \
-  --stack-name SungardAS-aws-services-alerts-destination
+  --stack-name SungardAS-aws-services-alerts-destination \
+  --parameter-overrides CloudWatchLogDestinationName=$CLOUDWATCHLOG_DESTINATION_NAME KinesisStreamArn=$KINESIS_STREAM_ARN

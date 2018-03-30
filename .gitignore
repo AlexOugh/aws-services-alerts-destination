@@ -5,3 +5,4 @@ __*
 dist
 keys.js
 *.local*
+samTemplate.yaml
