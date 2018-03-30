@@ -294,7 +294,7 @@ Resources:
                 -
                   Name: MyAppBuild
               Configuration:
-                ProjectName: !GetAtt CodeBuild.Outputs.ProjectName
+                ProjectName: !Ref CodeBuild
               RunOrder: 1
         -
           Name: Deploy
@@ -353,4 +353,4 @@ Resources:
               RunOrder: 2
       ArtifactStore:
         Type: S3
-        Location: !GetAtt CodeBuild.Outputs.ArtifactS3BucketName
+        Location: !Ref InputArtifactS3Bucket
