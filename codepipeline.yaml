@@ -322,14 +322,13 @@ Resources:
                     - '-'
                     - - !Ref GitHubSourceRepositoryOwner
                       - !Ref GitHubSourceRepositoryName
-                ParameterOverrides: !If [HasParameterOverrides, !Ref ParameterOverrides, "{}"]
                 ParameterOverrides: !Join
                     - ''
-                    - - "{'CloudWatchLogDestinationName': '"
+                    - - '{"CloudWatchLogDestinationName": "'
                       - !Ref CloudWatchLogDestinationName
-                      - "', 'KinesisStreamArn': '"
+                      - '", "KinesisStreamArn": "'
                       - !Ref KinesisStreamArn
-                      - "'}"
+                      - '"}'
                 TemplatePath: MyAppBuild::samTemplate.yaml
               RunOrder: 1
             -
